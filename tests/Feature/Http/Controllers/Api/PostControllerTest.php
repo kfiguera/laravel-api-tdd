@@ -43,4 +43,13 @@ class PostControllerTest extends TestCase
 
         $this->assertDatabaseHas('posts', ['title' => 'Post de Prueba']);
     }
+    public function test_validate_title()
+    {
+        $response = $this->json('POST', '/api/posts', [
+            'title' => '',
+        ]);
+        // Estatus HTTP 422 no se pudo completar la solicitud
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors('title');
+    }
 }
