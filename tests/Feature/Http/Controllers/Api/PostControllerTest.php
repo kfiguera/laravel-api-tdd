@@ -88,6 +88,7 @@ class PostControllerTest extends TestCase
 
         $this->assertDatabaseHas('posts', ['title' => 'Post Modificado']);
     }
+
     public function test_delete()
     {
 
@@ -97,5 +98,17 @@ class PostControllerTest extends TestCase
             ->assertStatus(204); // Sin contenido
 
         $this->assertDatabaseMissing('posts', ['id' => $post->id]);
+    }
+
+    public function test_index()
+    {
+        $posts = Post::factory(5)->create();
+
+        $response = $this->json('GET', '/api/posts');
+        $response->assertJsonStructure([
+            'data' => [
+                '*' => ['id', 'title', 'created_at', 'updated_at']
+            ]
+        ])->assertStatus(200);
     }
 }
