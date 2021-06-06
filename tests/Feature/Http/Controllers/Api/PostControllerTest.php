@@ -65,6 +65,7 @@ class PostControllerTest extends TestCase
             ->assertJson(['title' => $post->title])
             ->assertStatus(200);
     }
+
     public function test_404_show()
     {
         $rand = rand();
@@ -72,5 +73,19 @@ class PostControllerTest extends TestCase
         $response = $this->json('GET', "/api/posts/$rand");
 
         $response->assertStatus(404);
+    }
+
+    public function test_update()
+    {
+
+        $post = Post::factory()->create();
+        $response = $this->json('PUT', "/api/posts/$post->id", [
+            'title' => 'Post Modificado',
+        ]);
+        $response->assertJsonStructure(['id', 'title', 'created_at', 'updated_at'])
+            ->assertJson(['title' => 'Post Modificado'])
+            ->assertStatus(200); // Ok creado un recurso
+
+        $this->assertDatabaseHas('posts', ['title' => 'Post Modificado']);
     }
 }
